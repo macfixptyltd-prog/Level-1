@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0}</style>
+</head>
+<body>
+<title>گره به گره</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@500;700&family=Vazirmatn:wght@300;400;600&display=swap">
+<style>
+/* Layout: a fixed WebGL stage under a tall RTL scroll; five stations ride over it, cards on the right on desktop, bottom sheets on phones */
+:root{
+  --night:#170d0b;
+  --madder:#9b2318;
+  --wool:#f3e6cf;
+  --wool-dim:#cbb999;
+  --turquoise:#8ccad0;
+  --saffron:#e6a531;
+  --panel:rgba(23,13,11,.74);
+  --line:rgba(243,230,207,.16);
+  --display:"Noto Nastaliq Urdu","Vazirmatn",serif;
+  --body:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html{background:var(--night)}
+body{background:var(--night);color:var(--wool);font-family:var(--body);font-size:17px;line-height:1.95;direction:rtl}
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;touch-action:pan-y}
+.fallback{position:fixed;inset:0;z-index:0;background:var(--night) url("carpet.jpg") center/cover no-repeat;display:none}
+.no-gl .fallback{display:block}
+.no-gl #stage{display:none}
+.veil{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(23,13,11,.9) 0%,rgba(23,13,11,.55) 38%,rgba(23,13,11,0) 70%)}
+
+main{position:relative;z-index:1;padding-inline:16px}
+.station{min-height:100vh;max-width:1180px;margin-inline:auto;display:flex;align-items:center;justify-content:flex-start;padding-block:12vh}
+.card{background:var(--panel);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--line);
+  padding:26px 30px 28px;max-width:29rem;min-width:0;border-radius:3px;display:grid;gap:10px}
+.eyebrow{font-size:.78rem;letter-spacing:.04em;color:var(--turquoise);font-weight:600;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:22px;height:1px;background:currentColor}
+h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;line-height:2.1}
+h1{font-size:clamp(2.1rem,6vw,3.6rem);line-height:2}
+h2{font-size:clamp(1.55rem,3.6vw,2.15rem)}
+p{margin:0;color:var(--wool-dim);max-width:34em}
+p strong{color:var(--wool);font-weight:600}
+.hero{background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0;max-width:32rem}
+.hero p{color:var(--wool);font-size:1.08rem}
+.hint{margin-top:18px;display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--wool-dim)}
+.hint i{width:1px;height:38px;background:linear-gradient(var(--saffron),transparent);animation:drip 2.2s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(.2);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(.2);transform-origin:bottom}}
+.raj{display:flex;gap:4px;margin-top:6px;align-items:flex-end;direction:ltr;justify-content:flex-end}
+.raj span{width:7px;height:7px;border-radius:50%;background:var(--madder);box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
+.raj span:nth-child(3n){background:var(--saffron)}
+.raj span:nth-child(5n){background:var(--turquoise)}
+.raj-note{font-size:.8rem;color:var(--wool-dim)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.btn{font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;text-decoration:none;padding:10px 20px;border-radius:2px;border:1px solid var(--saffron)}
+.btn.primary{background:var(--saffron);color:var(--night)}
+.btn.ghost{background:transparent;color:var(--wool)}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible{outline:2px solid var(--turquoise);outline-offset:3px}
+
+.hud{position:fixed;z-index:2;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:2px;
+  font-size:.72rem;color:var(--wool-dim);background:var(--panel);border:1px solid var(--line);padding:8px 12px;border-radius:3px;
+  font-variant-numeric:tabular-nums;min-width:7.5rem}
+.hud b{direction:ltr;text-align:right;font-size:1.15rem;color:var(--wool);font-weight:600}
+.hud .bar{height:2px;background:var(--line);margin-top:4px}
+.hud .bar i{display:block;height:100%;width:0;background:var(--saffron)}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .station{align-items:flex-end;padding-block:0 8vh}
+  .card{padding:20px 20px 22px}
+  .hero{background:var(--panel);border:1px solid var(--line);padding:20px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .veil{background:linear-gradient(to top,rgba(23,13,11,.85),rgba(23,13,11,0) 55%)}
+  .hud{top:calc(12px + env(safe-area-inset-top,0px));bottom:auto}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+</style>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="fallback" aria-hidden="true"></div>
+<div class="veil" id="veil" aria-hidden="true"></div>
+
+<div class="hud" aria-hidden="true">
+  <span>بزرگنمایی</span>
+  <b id="zoom">×۱</b>
+  <div class="bar"><i id="bar"></i></div>
+</div>
+
+<main>
+  <section class="station" id="top">
+    <div class="card hero">
+      <span class="eyebrow">نمای کامل</span>
+      <h1>از دور، یک باغ گل</h1>
+      <p>نزدیک‌تر بیایید. هر گل این فرش از صدها گره کوچک ساخته شده است.</p>
+      <div class="hint"><i></i>برای نزدیک شدن، صفحه را پایین بکشید</div>
+    </div>
+  </section>
+
+  <section class="station">
+    <div class="card">
+      <span class="eyebrow">نمای گل</span>
+      <h2>هر گل، صدها گره</h2>
+      <p>این گل‌ها چاپ نشده‌اند. بافنده هر گره را با نخ رنگی جداگانه می‌زند و نقش، <strong>گره به گره</strong> روی دار شکل می‌گیرد.</p>
+    </div>
+  </section>
+
+  <section class="station">
+    <div class="card">
+      <span class="eyebrow">نمای گره</span>
+      <h2>رج، زبان تراکم</h2>
+      <p>در بازار فرش ایران تراکم را با <strong>رج</strong> می‌سنجند: تعداد گره‌ها در هفت سانتی‌متر. هرچه رج بالاتر باشد، گره‌ها ریزترند و نقش ظریف‌تر.</p>
+      <div class="raj" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <span class="raj-note">۲۰ گره در یک ردیف. فرشی ۴۰ رج دو برابر این تعداد گره را در هر هفت سانتی‌متر جا می‌دهد.</span>
+    </div>
+  </section>
+
+  <section class="station">
+    <div class="card">
+      <span class="eyebrow">نمای تار و پود</span>
+      <h2>اسکلتِ زیر پرز</h2>
+      <p>زیر پرزها، <strong>تارهای</strong> عمودی و <strong>پودهای</strong> افقی اسکلت فرش‌اند. هر گره دور دو تار بسته می‌شود و پود آن را سر جایش محکم می‌کند.</p>
+    </div>
+  </section>
+
+  <section class="station">
+    <div class="card">
+      <span class="eyebrow">فرش دستباف</span>
+      <h2>نقش را از دور ببینید، کیفیت را از نزدیک</h2>
+      <p>هر فرش این مجموعه با دست و گره به گره بافته شده است.</p>
+      <div class="actions">
+        <a class="btn primary" href="#collection">مشاهدهٔ مجموعه</a>
+        <button class="btn ghost" type="button" id="toTop">بازگشت به نمای کامل</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+const FOCUS_PX = [515, 560];   // a rose in the photo, in image pixels
+const W = 8;                   // carpet width in world units
+const S = 0.045;               // knot pitch
+const RMAX = 2.3;              // radius of the knotted patch around the rose
+const fa = n => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const ss = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+document.getElementById("toTop").addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }));
+
+function loadImage(src) {
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+}
+
+async function main() {
+  const canvas = document.getElementById("stage");
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" }); }
+  catch (e) { document.documentElement.classList.add("no-gl"); return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x170d0b);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 80);
+
+  const img = await loadImage("carpet.jpg");
+  const iw = img.naturalWidth, ih = img.naturalHeight, H = W * ih / iw;
+  const focus = new THREE.Vector3((FOCUS_PX[0] / iw - 0.5) * W, 0, (FOCUS_PX[1] / ih - 0.5) * H);
+
+  const tex = new THREE.Texture(img);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  tex.needsUpdate = true;
+
+  // Photo plane; a circle around the rose turns into the cotton foundation the knots sit on
+  const photoMat = new THREE.ShaderMaterial({
+    uniforms: {
+      map: { value: tex },
+      focus: { value: new THREE.Vector2(focus.x, focus.z) },
+      radius: { value: 0 },
+      foundation: { value: new THREE.Color(0x4a3424) },
+    },
+    vertexShader: `varying vec2 vUv; varying vec3 vW;
+      void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+    fragmentShader: `uniform sampler2D map; uniform vec2 focus; uniform float radius; uniform vec3 foundation;
+      varying vec2 vUv; varying vec3 vW;
+      void main(){
+        vec4 c = texture2D(map, vUv);
+        float m = smoothstep(radius - 0.2, radius, distance(vW.xz, focus));
+        gl_FragColor = vec4(mix(foundation, c.rgb, m), 1.0);
+        #include <colorspace_fragment>
+      }`,
+  });
+  const photo = new THREE.Mesh(new THREE.PlaneGeometry(W, H), photoMat);
+  photo.rotation.x = -Math.PI / 2;
+  scene.add(photo);
+
+  // Sample knot colours straight from the photo
+  const cv = document.createElement("canvas");
+  cv.width = iw; cv.height = ih;
+  const ctx = cv.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(img, 0, 0);
+  const px = ctx.getImageData(0, 0, iw, ih).data;
+  const sample = (u, v) => {
+    const cx = Math.floor(u * iw), cy = Math.floor(v * ih);
+    let r = 0, g = 0, b = 0, n = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const x = Math.min(iw - 1, Math.max(0, cx + dx)), y = Math.min(ih - 1, Math.max(0, cy + dy));
+      const k = (y * iw + x) * 4; r += px[k]; g += px[k + 1]; b += px[k + 2]; n++;
+    }
+    return [r / n / 255, g / n / 255, b / n / 255];
+  };
+
+  const cols = Math.floor(W / S), rows = Math.floor(H / S);
+  const knots = [];
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+    const x = (i + 0.5) * S - W / 2, z = (j + 0.5) * S - H / 2;
+    const d = Math.hypot(x - focus.x, z - focus.z);
+    if (d > RMAX) continue;
+    knots.push({ x, z, d, c: sample(x / W + 0.5, z / H + 0.5),
+      h: 0.88 + Math.random() * 0.24, tx: (Math.random() - 0.5) * 0.22, tz: (Math.random() - 0.5) * 0.22 - 0.08 });
+  }
+
+  const small = Math.min(innerWidth, innerHeight) < 700;
+  const knotGeo = new THREE.SphereGeometry(0.5, small ? 8 : 11, small ? 5 : 7);
+  knotGeo.translate(0, 0.5, 0);
+  const knotMesh = new THREE.InstancedMesh(knotGeo, new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0 }), knots.length);
+  const col = new THREE.Color();
+  knots.forEach((k, n) => {
+    const jit = 0.94 + Math.random() * 0.12;
+    col.setRGB(k.c[0] * jit, k.c[1] * jit, k.c[2] * jit, THREE.SRGBColorSpace);
+    knotMesh.setColorAt(n, col);
+  });
+  knotMesh.frustumCulled = false;
+  scene.add(knotMesh);
+
+  // Warp (along the carpet's length) and weft (across it) on the cell boundaries
+  const threadGeo = new THREE.CylinderGeometry(1, 1, 1, 6, 1);
+  const warps = [], wefts = [];
+  for (let i = 0; i <= cols; i++) { const x = i * S - W / 2; if (Math.abs(x - focus.x) < RMAX) warps.push(x); }
+  for (let j = 0; j <= rows; j++) { const z = j * S - H / 2; if (Math.abs(z - focus.z) < RMAX) wefts.push(z); }
+  const warpMesh = new THREE.InstancedMesh(threadGeo, new THREE.MeshStandardMaterial({ color: 0xefe3cc, roughness: 0.8 }), warps.length);
+  const weftMesh = new THREE.InstancedMesh(threadGeo, new THREE.MeshStandardMaterial({ color: 0xa88f6a, roughness: 0.85 }), wefts.length);
+  warpMesh.frustumCulled = weftMesh.frustumCulled = false;
+  scene.add(warpMesh, weftMesh);
+
+  scene.add(new THREE.HemisphereLight(0xfff3e2, 0x2a1810, 1.3));
+  const sun = new THREE.DirectionalLight(0xfff0d8, 1.9);
+  sun.position.set(-3, 5, 3);
+  scene.add(sun);
+
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), v = new THREE.Vector3(), sc = new THREE.Vector3();
+  const qWarp = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+  const qWeft = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
+
+  function updateWeave(r, sep) {
+    photoMat.uniforms.radius.value = r;
+    const rad = S * THREE.MathUtils.lerp(0.64, 0.33, sep);
+    const hgt = S * THREE.MathUtils.lerp(0.85, 2.0, sep);
+    knots.forEach((k, n) => {
+      const g = 1 - ss(r - 0.22, r, k.d);
+      if (g <= 0.001) { m4.makeScale(0, 0, 0); knotMesh.setMatrixAt(n, m4); return; }
+      v.set(k.x, (g - 1) * hgt * 0.6, k.z);
+      q.setFromEuler(e.set(k.tz * sep, 0, k.tx * sep));
+      sc.set(rad * 2 * g, hgt * k.h * g, rad * 2 * g);
+      knotMesh.setMatrixAt(n, m4.compose(v, q, sc));
+    });
+    knotMesh.instanceMatrix.needsUpdate = true;
+
+    const tr = S * 0.11, rr = Math.max(0, r - 0.12);
+    warps.forEach((x, n) => {
+      const half = Math.sqrt(Math.max(0, rr * rr - (x - focus.x) ** 2));
+      v.set(x, tr, focus.z); sc.set(tr, half * 2 + 1e-4, tr);
+      warpMesh.setMatrixAt(n, m4.compose(v, qWarp, sc));
+    });
+    wefts.forEach((z, n) => {
+      const half = Math.sqrt(Math.max(0, rr * rr - (z - focus.z) ** 2));
+      v.set(focus.x, tr * 2.2, z); sc.set(tr * 0.7, half * 2 + 1e-4, tr * 0.7);
+      weftMesh.setMatrixAt(n, m4.compose(v, qWeft, sc));
+    });
+    warpMesh.instanceMatrix.needsUpdate = weftMesh.instanceMatrix.needsUpdate = true;
+  }
+
+  // Camera path: whole carpet, the rose, the pile, then low across the knots
+  const F = focus;
+  const keys = [
+    { p: 0.00, pos: [0, 10.5, 9.0], tgt: [0, 0, 0.2], abs: true },
+    { p: 0.30, pos: [0.0, 3.4, 3.0], tgt: [0, 0, 0] },
+    { p: 0.55, pos: [0.1, 1.2, 1.2], tgt: [0, 0, 0] },
+    { p: 0.80, pos: [0.35, 0.5, 0.72], tgt: [0, 0, -0.05] },
+    { p: 1.00, pos: [0.55, 0.34, 0.5], tgt: [-0.05, 0, -0.12] },
+  ];
+  const kp = keys.map(k => ({
+    p: k.p,
+    pos: k.abs ? new THREE.Vector3(...k.pos) : new THREE.Vector3(...k.pos).add(F),
+    tgt: k.abs ? new THREE.Vector3(...k.tgt) : new THREE.Vector3(...k.tgt).add(F),
+  }));
+  const startDist = kp[0].pos.distanceTo(kp[0].tgt);
+  const camPos = new THREE.Vector3(), camTgt = new THREE.Vector3(), off = new THREE.Vector3();
+  let fitScale = 1;
+
+  function cameraAt(p, t) {
+    let i = 0;
+    while (i < kp.length - 2 && p > kp[i + 1].p) i++;
+    const a = kp[i], b = kp[i + 1];
+    const f = ss(0, 1, (p - a.p) / (b.p - a.p));
+    const pa = a.pos.clone();
+    if (i === 0) pa.sub(a.tgt).multiplyScalar(fitScale).add(a.tgt);
+    camPos.lerpVectors(pa, b.pos, f);
+    camTgt.lerpVectors(a.tgt, b.tgt, f);
+    if (!reduce) {
+      off.subVectors(camPos, camTgt);
+      off.applyAxisAngle(THREE.Object3D.DEFAULT_UP, Math.sin(t * 0.00025) * 0.06 + pointer.x * 0.05);
+      camPos.copy(camTgt).add(off);
+      camPos.y += pointer.y * 0.04 * off.length() * 0.3;
+    }
+    camera.position.copy(camPos);
+    camera.lookAt(camTgt);
+  }
+
+  const pointer = { x: 0, y: 0 };
+  addEventListener("pointermove", ev => {
+    if (ev.pointerType !== "mouse") return;
+    pointer.x = (ev.clientX / innerWidth - 0.5) * 2;
+    pointer.y = (ev.clientY / innerHeight - 0.5) * 2;
+  }, { passive: true });
+
+  function resize() {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    fitScale = Math.max(1, (11.5 / camera.aspect) / startDist);
+  }
+  addEventListener("resize", resize);
+  resize();
+
+  const zoomEl = document.getElementById("zoom"), barEl = document.getElementById("bar"), veil = document.getElementById("veil");
+  const progress = () => { const max = document.documentElement.scrollHeight - innerHeight; return max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0; };
+  let p = progress(), lastWeave = -1, lastZoom = "";
+
+  function frame(t) {
+    const target = progress();
+    p = reduce ? target : p + (target - p) * 0.1;
+    if (Math.abs(target - p) < 1e-4) p = target;
+
+    const weaveKey = Math.round(p * 2000);
+    if (weaveKey !== lastWeave) {
+      lastWeave = weaveKey;
+      updateWeave(ss(0.12, 0.5, p) * RMAX, ss(0.6, 0.88, p));
+    }
+    cameraAt(p, t);
+    veil.style.opacity = String(1 - ss(0, 0.14, p) * 0.85);
+
+    const zoom = Math.max(1, Math.round((startDist * fitScale) / camPos.distanceTo(camTgt)));
+    const z = "×" + fa(zoom);
+    if (z !== lastZoom) { zoomEl.textContent = z; lastZoom = z; }
+    barEl.style.width = (p * 100).toFixed(1) + "%";
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+main().catch(() => document.documentElement.classList.add("no-gl"));
+</script>
+
+</body>
+</html>
