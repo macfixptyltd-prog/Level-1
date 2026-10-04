@@ -94,17 +94,17 @@ p strong{color:var(--wool);font-weight:600}
   <section class="station" id="top">
     <div class="card hero">
       <span class="eyebrow">نمای کامل</span>
-      <h1>از دور، یک باغ گل</h1>
-      <p>نزدیک‌تر بیایید. هر گل این فرش از صدها گره کوچک ساخته شده است.</p>
+      <h1>از دور، یک ترنج</h1>
+      <p>نزدیک‌تر بیایید. نقش این فرش از هزاران گرهٔ رنگی کوچک ساخته شده است.</p>
       <div class="hint"><i></i>برای نزدیک شدن، صفحه را پایین بکشید</div>
     </div>
   </section>
 
   <section class="station">
     <div class="card">
-      <span class="eyebrow">نمای گل</span>
-      <h2>هر گل، صدها گره</h2>
-      <p>این گل‌ها چاپ نشده‌اند. بافنده هر گره را با نخ رنگی جداگانه می‌زند و نقش، <strong>گره به گره</strong> روی دار شکل می‌گیرد.</p>
+      <span class="eyebrow">نمای ترنج</span>
+      <h2>هر ترنج، هزاران گره</h2>
+      <p>در فرش دستباف، بافنده هر گره را با نخ رنگی جداگانه می‌زند و ترنج و حاشیه، <strong>گره به گره</strong> روی دار شکل می‌گیرند.</p>
     </div>
   </section>
 
@@ -132,7 +132,7 @@ p strong{color:var(--wool);font-weight:600}
     <div class="card">
       <span class="eyebrow">فرش دستباف</span>
       <h2>نقش را از دور ببینید، کیفیت را از نزدیک</h2>
-      <p>هر فرش این مجموعه با دست و گره به گره بافته شده است.</p>
+      <p>مجموعهٔ فرش‌های ما را ببینید و نقش دلخواهتان را پیدا کنید.</p>
       <div class="actions">
         <a class="btn primary" href="#collection">مشاهدهٔ مجموعه</a>
         <button class="btn ghost" type="button" id="toTop">بازگشت به نمای کامل</button>
@@ -144,7 +144,7 @@ p strong{color:var(--wool);font-weight:600}
 <script type="module">
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
-const FOCUS_PX = [515, 560];   // a rose in the photo, in image pixels
+const FOCUS_UV = [0.5, 0.497]; // centre of the medallion, as a fraction of the photo
 const W = 8;                   // carpet width in world units
 const S = 0.045;               // knot pitch
 const RMAX = 2.3;              // radius of the knotted patch around the rose
@@ -172,7 +172,7 @@ async function main() {
 
   const img = await loadImage("carpet.jpg");
   const iw = img.naturalWidth, ih = img.naturalHeight, H = W * ih / iw;
-  const focus = new THREE.Vector3((FOCUS_PX[0] / iw - 0.5) * W, 0, (FOCUS_PX[1] / ih - 0.5) * H);
+  const focus = new THREE.Vector3((FOCUS_UV[0] - 0.5) * W, 0, (FOCUS_UV[1] - 0.5) * H);
 
   const tex = new THREE.Texture(img);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -288,10 +288,10 @@ async function main() {
     warpMesh.instanceMatrix.needsUpdate = weftMesh.instanceMatrix.needsUpdate = true;
   }
 
-  // Camera path: whole carpet, the rose, the pile, then low across the knots
+  // Camera path: whole carpet, the medallion, the pile, then low across the knots
   const F = focus;
   const keys = [
-    { p: 0.00, pos: [0, 10.5, 9.0], tgt: [0, 0, 0.2], abs: true },
+    { p: 0.00, pos: [0, H * 1.36, H * 0.62], tgt: [0, 0, H * 0.03], abs: true },
     { p: 0.30, pos: [0.0, 3.4, 3.0], tgt: [0, 0, 0] },
     { p: 0.55, pos: [0.1, 1.2, 1.2], tgt: [0, 0, 0] },
     { p: 0.80, pos: [0.35, 0.5, 0.72], tgt: [0, 0, -0.05] },
